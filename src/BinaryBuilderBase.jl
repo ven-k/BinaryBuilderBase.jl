@@ -70,14 +70,13 @@ const allow_ecryptfs = Ref(false)
 const use_ccache = Ref(false)
 const bootstrap_list = Symbol[]
 
-DIR = @path @__DIR__
+const DIR = @path @__DIR__
 function get_bbb_version(dir=DIR, uuid="7f725544-6523-48cd-82d1-3fa08ff4056e")
     # Get BinaryBuilder.jl's version and git sha
     version = Pkg.TOML.parsefile(joinpath(dir, "..", "Project.toml"))["version"]
     try
-        DIR = @path @__DIR__
         # get the gitsha if we can
-        repo = LibGit2.GitRepo(dirname(DIR))
+        repo = LibGit2.GitRepo(dirname(dir))
         gitsha = string(LibGit2.GitHash(LibGit2.GitCommit(repo, "HEAD")))
         return VersionNumber("$(version)-git-$(gitsha[1:10])")
     catch
@@ -120,7 +119,8 @@ function versioninfo(; name=@__MODULE__, version=get_bbb_version())
             end
         end
 
-        print_enc("pkg dir", dirname(@__FILE__))
+        const dir_name = @path dirname(@__FILE__)
+        print_enc("pkg dir", dirname)
         print_enc("storage dir", storage_dir())
     end
 
@@ -172,10 +172,9 @@ function __init__()
     global runner_override, use_squashfs, allow_ecryptfs
     global use_ccache, storage_cache
 
-    DIR = @path @__DIR__
     # Allow the user to override the default value for `storage_dir`
     storage_cache[] = get(ENV, "BINARYBUILDER_STORAGE_DIR",
-                          abspath(joinpath(DIR, "..", "deps")))
+                          abspath(joinpath(@__DIR__, "..", "deps")))
 
     # If the user has signalled that they really want us to automatically
     # accept apple EULAs, do that.
