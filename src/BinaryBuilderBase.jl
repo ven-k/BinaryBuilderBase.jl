@@ -70,7 +70,7 @@ const allow_ecryptfs = Ref(false)
 const use_ccache = Ref(false)
 const bootstrap_list = Symbol[]
 
-const artifacts_toml = @path joinpath(dirname(@__DIR__), "Artifacts.toml")
+const artifacts_toml = @path Pkg.Artifacts.find_artifacts_toml(@__FILE__)
 const DIR = @path @__DIR__
 
 function get_bbb_version(dir=DIR, uuid="7f725544-6523-48cd-82d1-3fa08ff4056e")
