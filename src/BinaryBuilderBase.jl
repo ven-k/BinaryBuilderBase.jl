@@ -119,8 +119,8 @@ function versioninfo(; name=@__MODULE__, version=get_bbb_version())
             end
         end
 
-        const dir_name = @path dirname(@__FILE__)
-        print_enc("pkg dir", dirname)
+        dir_name = @path dirname(@__FILE__)
+        print_enc("pkg dir", dir_name)
         print_enc("storage dir", storage_dir())
     end
 
