@@ -70,13 +70,17 @@ const allow_ecryptfs = Ref(false)
 const use_ccache = Ref(false)
 const bootstrap_list = Symbol[]
 
+const artifacts_toml = @path joinpath(dirname(@__DIR__), "Artifacts.toml")
 const DIR = @path @__DIR__
+
 function get_bbb_version(dir=DIR, uuid="7f725544-6523-48cd-82d1-3fa08ff4056e")
     # Get BinaryBuilder.jl's version and git sha
-    version = Pkg.TOML.parsefile(joinpath(dir, "..", "Project.toml"))["version"]
+    project_path = @path joinpath(dir, "..", "Project.toml")
+    version = Pkg.TOML.parsefile(project_path)["version"]
     try
         # get the gitsha if we can
-        repo = LibGit2.GitRepo(dirname(dir))
+        dir_name = @path dirname(dir)
+        repo = LibGit2.GitRepo(dir_name)
         gitsha = string(LibGit2.GitHash(LibGit2.GitCommit(repo, "HEAD")))
         return VersionNumber("$(version)-git-$(gitsha[1:10])")
     catch
@@ -167,7 +171,8 @@ function versioninfo(; name=@__MODULE__, version=get_bbb_version())
     end
     return nothing
 end
-
+dir_name = @path dirname(@__FILE__)
+@__FILE__
 function __init__()
     global runner_override, use_squashfs, allow_ecryptfs
     global use_ccache, storage_cache
